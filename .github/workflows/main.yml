@@ -18,7 +18,9 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y build-essential
 
     - name: Build project
-      run: make all
+      run: 
+        cd Proj_001
+        make all
 
     - name: Accept merge request
       if: ${{ success() }}
