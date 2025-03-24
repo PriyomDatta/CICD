@@ -23,7 +23,13 @@ jobs:
         mkdir -p build
         make all
 
-    - name: Accept merge request
+    - name: Reject merge request if build fails
+      if: ${{ failure() }}
+      run: gh pr close ${{ github.event.pull_request.number }} --comment "Build failed. Merge request rejected."
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Accept merge request if build succeeds
       if: ${{ success() }}
       run: gh pr merge ${{ github.event.pull_request.number }} --auto --merge
       env:
