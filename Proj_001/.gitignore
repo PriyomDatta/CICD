@@ -1,0 +1,5 @@
+# Ignore all files in the build folder
+build/
+
+# Ignore all files with .o extension
+*.o
