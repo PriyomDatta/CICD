@@ -6,9 +6,6 @@ on:
       - master
     types: [opened, synchronize, reopened]
     
-permissions:
-  pull-requests: write
-  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,14 +23,8 @@ jobs:
         mkdir -p build
         make all
 
-    - name: Reject merge request if build fails
-      if: ${{ failure() }}
-      run: gh pr close ${{ github.event.pull_request.number }} --comment "Build failed. Merge request rejected."
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Accept merge request if build succeeds
-      if: ${{ success() }}
-      run: gh pr merge ${{ github.event.pull_request.number }} --auto --merge
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Check build status
+      if: failure()
+      run: |
+        echo "Build failed, cancelling merge request."
+        gh pr close ${{ github.event.pull_request.number }} --comment "Build failed, merge request cancelled."
