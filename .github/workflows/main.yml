@@ -20,6 +20,7 @@ jobs:
     - name: Build project
       run: |
         cd Proj_001
+        mkdir -p build
         make all
 
     - name: Accept merge request
