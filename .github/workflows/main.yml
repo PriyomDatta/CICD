@@ -1,0 +1,27 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - master
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up build environment
+      run: sudo apt-get update && sudo apt-get install -y build-essential
+
+    - name: Build project
+      run: make all
+
+    - name: Accept merge request
+      if: ${{ success() }}
+      run: gh pr merge ${{ github.event.pull_request.number }} --auto --merge
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
